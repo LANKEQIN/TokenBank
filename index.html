@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokenBank - AI 平台额度管理</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle" title="切换主题">🌙</button>
+    <div class="container">
+        <header class="header">
+            <h1>🏦 TokenBank</h1>
+            <p class="subtitle">AI 平台额度管理仪表盘</p>
+        </header>
+
+        <div class="stats-section">
+            <div class="stat-card">
+                <div class="stat-label">总平台数</div>
+                <div class="stat-value" id="totalPlatforms">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">总剩余额度</div>
+                <div class="stat-value" id="totalBalance">0.00</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">即将过期</div>
+                <div class="stat-value warning" id="expiringSoon">0</div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="platforms-section">
+                <div class="section-header">
+                    <h2>平台列表</h2>
+                    <button class="btn btn-primary" id="addPlatformBtn">+ 添加平台</button>
+                </div>
+                <div class="platforms-grid" id="platformsGrid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="platformModal">
+        <div class="modal-content wizard-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">添加平台</h3>
+                <button class="close-btn" id="closeModal">&times;</button>
+            </div>
+            <div class="wizard-steps">
+                <div class="step-indicator" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">选择平台</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-indicator" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">配置额度</div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-indicator" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">确认信息</div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <form id="platformForm">
+                    <input type="hidden" id="platformId">
+                    
+                    <div class="wizard-step" data-step="1">
+                        <div class="form-group" id="platformNameGroup" style="display: none;">
+                            <label for="platformName">平台名称 *</label>
+                            <input type="text" id="platformName" placeholder="请输入自定义平台名称">
+                        </div>
+                        <div class="form-group">
+                            <label for="platformType">平台类型</label>
+                            <div class="platform-type-grid">
+                                <label class="platform-type-card" data-type="aliyun">
+                                    <input type="radio" name="platformType" value="aliyun">
+                                    <div class="card-icon">🔷</div>
+                                    <div class="card-name">阿里云百炼</div>
+                                </label>
+                                <label class="platform-type-card" data-type="volcano">
+                                    <input type="radio" name="platformType" value="volcano">
+                                    <div class="card-icon">🌋</div>
+                                    <div class="card-name">火山引擎</div>
+                                </label>
+                                <label class="platform-type-card" data-type="deepseek">
+                                    <input type="radio" name="platformType" value="deepseek">
+                                    <div class="card-icon">🔮</div>
+                                    <div class="card-name">DeepSeek</div>
+                                </label>
+                                <label class="platform-type-card" data-type="openrouter">
+                                    <input type="radio" name="platformType" value="openrouter">
+                                    <div class="card-icon">🌐</div>
+                                    <div class="card-name">OpenRouter</div>
+                                </label>
+                                <label class="platform-type-card" data-type="openai">
+                                    <input type="radio" name="platformType" value="openai">
+                                    <div class="card-icon">🤖</div>
+                                    <div class="card-name">OpenAI</div>
+                                </label>
+                                <label class="platform-type-card" data-type="anthropic">
+                                    <input type="radio" name="platformType" value="anthropic">
+                                    <div class="card-icon">🧠</div>
+                                    <div class="card-name">Anthropic</div>
+                                </label>
+                                <label class="platform-type-card" data-type="zhipu">
+                                    <input type="radio" name="platformType" value="zhipu">
+                                    <div class="card-icon">💡</div>
+                                    <div class="card-name">智谱AI</div>
+                                </label>
+                                <label class="platform-type-card" data-type="moonshot">
+                                    <input type="radio" name="platformType" value="moonshot">
+                                    <div class="card-icon">🌙</div>
+                                    <div class="card-name">Moonshot</div>
+                                </label>
+                                <label class="platform-type-card" data-type="other">
+                                    <input type="radio" name="platformType" value="other">
+                                    <div class="card-icon">📦</div>
+                                    <div class="card-name">其他</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="wizard-step" data-step="2" style="display: none;">
+                        <div class="form-group">
+                            <label for="planType">计划类型</label>
+                            <select id="planType">
+                                <option value="">未设置</option>
+                                <option value="free">免费版 🆓</option>
+                                <option value="basic">基础版 🥉</option>
+                                <option value="pro">专业版 🥈</option>
+                                <option value="enterprise">企业版 🥇</option>
+                                <option value="custom">定制版 ⚡</option>
+                                <option value="volcano_collab">火山协作计划 🔥</option>
+                            </select>
+                            <div class="plan-description" id="planDescription"></div>
+                        </div>
+                        <div class="form-group" id="balanceGroup">
+                            <label for="balance">剩余额度 *</label>
+                            <input type="number" id="balance" required step="0.01" min="0" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="currency">货币单位</label>
+                            <select id="currency">
+                                <option value="CNY">CNY (人民币)</option>
+                                <option value="USD">USD (美元)</option>
+                                <option value="tokens">Tokens</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="expiryDate">过期日期（可选）</label>
+                            <input type="date" id="expiryDate">
+                        </div>
+                        <div class="form-group">
+                            <label for="notes">备注</label>
+                            <textarea id="notes" rows="3" placeholder="可选备注信息"></textarea>
+                        </div>
+                    </div>
+                    
+                    <div class="wizard-step" data-step="3" style="display: none;">
+                        <div class="summary-section">
+                            <h4>平台信息确认</h4>
+                            <div class="summary-item">
+                                <span class="summary-label">平台名称：</span>
+                                <span class="summary-value" id="summaryName"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">平台类型：</span>
+                                <span class="summary-value" id="summaryType"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">计划类型：</span>
+                                <span class="summary-value" id="summaryPlan"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">剩余额度：</span>
+                                <span class="summary-value" id="summaryBalance"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">货币单位：</span>
+                                <span class="summary-value" id="summaryCurrency"></span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-label">过期日期：</span>
+                                <span class="summary-value" id="summaryExpiry"></span>
+                            </div>
+                            <div class="summary-item" id="summaryNotesItem">
+                                <span class="summary-label">备注：</span>
+                                <span class="summary-value" id="summaryNotes"></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="prevBtn" style="display: none;">上一步</button>
+                        <button type="button" class="btn btn-primary" id="nextBtn">下一步</button>
+                        <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">保存</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/platform.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
